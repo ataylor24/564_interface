@@ -2,6 +2,8 @@ from tkinter import *
 import pymysql
 import credentials
 
+search_result = []
+
 def create_civ_v_buttons(root):
     def write_label_delete(win):
         row = 0
@@ -131,15 +133,41 @@ def create_civ_v_buttons(root):
 
         def search():
             #clears the text from the boxes
-            id_.delete(0, END)
-            name.delete(0, END)
-            age.delete(0, END)
-            race.delete(0, END)
-            date_of_death.delete(0, END)
-            gender.delete(0, END)
-            cause.delete(0, END)
-            city_name.delete(0,END)
-            state_name.delete(0,END)
+            id_text = id_.get()
+            name_text = name.get()
+            age_text = age.get()
+            race_text = race.get()
+            date_of_death_text = date_of_death.get()
+            gender_text = gender.get()
+            cause_text = cause.get()
+            city_name_text = city_name.get()
+            state_name_text= state_name.get()
+            try:
+                connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
+                cursorclass=pymysql.cursors.DictCursor)
+                with connection.cursor() as cursor:
+                    sql = "SELECT * FROM civilian WHERE dead_civilian_id LIKE '%" + id_text + "%'" + \
+                    "and cname like '%" + name_text + "%'" + "and age like '%" + age_text + "%'" + \
+                    "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
+                    "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
+                    "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + "%'"
+                    cursor.execute(sql)
+                    search_result = cursor.fetchall()
+                    print(search_result)
+                    connection.commit()
+                # connection is not autocommit by default. So you must commit to save
+                # your changes.
+            finally:
+                connection.close()
+                id_.delete(0, END)
+                name.delete(0, END)
+                age.delete(0, END)
+                race.delete(0, END)
+                date_of_death.delete(0, END)
+                gender.delete(0, END)
+                cause.delete(0, END)
+                city_name.delete(0,END)
+                state_name.delete(0,END)
         b = Button(win, text="Search in database", command=search,highlightbackground="royalblue2")
         b.grid(row=10, column=0)
 
