@@ -1,6 +1,16 @@
 from tkinter import *
 
 def create_civ_v_buttons(root):
+    def write_label_delete(win):
+        row = 0
+        #NOT SURE IF THIS SHOULD BE UP TO THE USER
+        id_ = Entry(win,width=30,bg="royalblue2")
+        id_.grid(row=row,column=1,padx=20)
+        id_label = Label(win, text="ID",bg="royalblue2")
+        id_label.grid(row=row,column=0)
+
+        return id_
+
     def write_labels(win):
         row = 0
         #NOT SURE IF THIS SHOULD BE UP TO THE USER
@@ -92,16 +102,11 @@ def create_civ_v_buttons(root):
         win.wm_title("Delete Civilian Victim")
         win.geometry("500x350")
 
-        id_,name,age,race,date_of_death,gender,cause = write_labels(win)
+        id_= write_label_delete(win)
         def delete():
             #clears the text from the boxes
             id_.delete(0, END)
-            name.delete(0, END)
-            age.delete(0, END)
-            race.delete(0, END)
-            date_of_death.delete(0, END)
-            gender.delete(0, END)
-            cause.delete(0, END)
+            
         c = Button(win, text="Delete from database", command=delete,highlightbackground="royalblue2")
         c.grid(row=8, column=0)
     

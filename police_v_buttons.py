@@ -1,6 +1,16 @@
 from tkinter import *
 
 def create_police_buttons(root):
+    def write_label_delete(win):
+        row = 0
+        #NOT SURE IF THIS SHOULD BE UP TO THE USER
+        id_ = Entry(win,width=30,bg="royalblue2")
+        id_.grid(row=row,column=1,padx=20)
+        id_label = Label(win, text="ID",bg="royalblue2")
+        id_label.grid(row=row,column=0)
+
+        return id_
+
     def write_label(win):
         row = 0
         #NOT SURE IF THIS SHOULD BE UP TO THE USER
@@ -66,13 +76,10 @@ def create_police_buttons(root):
         win.wm_title("Delete Police Victim")
         win.geometry("600x200")
 
-        id_,name,date_of_death,cause = write_label(win)
+        id_ = write_label_delete(win)
         def delete():
             #clears the text from the boxes
             id_.delete(0, END)
-            name.delete(0, END)
-            date_of_death.delete(0, END)
-            cause.delete(0, END)
         
         b = Button(win, text="Delete from database", command=delete,highlightbackground="royalblue2")
         b.grid(row=6, column=0)

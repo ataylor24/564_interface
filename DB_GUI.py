@@ -6,12 +6,7 @@ import police_v_buttons
 import spec_query_btns
 
 #Creates a connection
-#db = pymysql.connect("localhost","testuser","test123","TESTDB" )
-
-#creates a cursor
-#mycursor = db.cursor()
-
-#mycursor.execute("CREATE DATABASE mydatabase")
+db = pymysql.connect("localhost","root","password","pdviolence" )
 
 def main():
     root = Tk()
