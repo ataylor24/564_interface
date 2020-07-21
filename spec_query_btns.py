@@ -1,4 +1,6 @@
 from tkinter import *
+import pymysql
+import credentials
 
 def create_special_query_btns(root):
     def write_label(win):

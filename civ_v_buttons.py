@@ -1,4 +1,6 @@
 from tkinter import *
+import pymysql
+import credentials
 
 def create_civ_v_buttons(root):
     def write_label_delete(win):
@@ -56,34 +58,76 @@ def create_civ_v_buttons(root):
         cause_label.grid(row=row,column=0)
         row+=1
 
-        return id_,name,age,race,date_of_death,gender,cause
+        city_name = Entry(win,width=30,bg="royalblue2")
+        city_name.grid(row=row,column=1)
+        city_name_label = Label(win, text="Location of Death (City)",bg="royalblue2")
+        city_name_label.grid(row=row,column=0)
+        row+=1
+
+        state_name = Entry(win,width=30,bg="royalblue2")
+        state_name.grid(row=row,column=1)
+        state_name_label = Label(win, text="Location of Death (State)",bg="royalblue2")
+        state_name_label.grid(row=row,column=0)
+        row+=1
+
+        return id_,name,age,race,date_of_death,gender,cause,city_name,state_name
 
     def pop_up_insert():
         win = Toplevel(bg="black")
         win.wm_title("Insert Civilian Victim")
         win.geometry("500x350")
 
-        id_,name,age,race,date_of_death,gender,cause = write_labels(win)
+        id_,name,age,race,date_of_death,gender,cause,city_name,state_name = write_labels(win)
         
         
         def submit():
+            
             #clears the text from the boxes
-            id_.delete(0, END)
-            name.delete(0, END)
-            age.delete(0, END)
-            race.delete(0, END)
-            date_of_death.delete(0, END)
-            gender.delete(0, END)
-            cause.delete(0, END)
+            id_text = id_.get()
+            name_text = name.get()
+            age_text = age.get()
+            race_text = race.get()
+            date_of_death_text = date_of_death.get()
+            gender_text = gender.get()
+            cause_text = cause.get()
+            city_name_text = city_name.get()
+            state_name_text= state_name.get()
+            
+            try:
+                connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
+                with connection.cursor() as cursor:
+                    # Create a new record
+                    sql = "INSERT INTO civilian (dead_civilian_id,cname,\
+                        age,gender,race,death_date,city_name,state_abbr,cause) \
+                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sql, (id_text,name_text,age_text, 
+                    gender_text,race_text,date_of_death_text,city_name_text,state_name_text,cause_text))
+                    connection.commit()
+                # connection is not autocommit by default. So you must commit to save
+                # your changes.
+
+            finally:
+                connection.close()
+                id_.delete(0, END)
+                name.delete(0, END)
+                age.delete(0, END)
+                race.delete(0, END)
+                date_of_death.delete(0, END)
+                gender.delete(0, END)
+                cause.delete(0, END)
+                city_name.delete(0,END)
+                state_name.delete(0,END)
+
+
         a = Button(win, text="Insert into database", command=submit,highlightbackground="royalblue2")
-        a.grid(row=8, column=0)
+        a.grid(row=10, column=0)
 
     def pop_up_search():
         win = Toplevel(bg="black")
         win.wm_title("Search Civilian Victim")
         win.geometry("500x350")
 
-        id_,name,age,race,date_of_death,gender,cause = write_labels(win)
+        id_,name,age,race,date_of_death,gender,cause,city_name,state_name = write_labels(win)
 
         def search():
             #clears the text from the boxes
@@ -94,8 +138,10 @@ def create_civ_v_buttons(root):
             date_of_death.delete(0, END)
             gender.delete(0, END)
             cause.delete(0, END)
+            city_name.delete(0,END)
+            state_name.delete(0,END)
         b = Button(win, text="Search in database", command=search,highlightbackground="royalblue2")
-        b.grid(row=8, column=0)
+        b.grid(row=10, column=0)
 
     def pop_up_delete():
         win = Toplevel(bg="black")

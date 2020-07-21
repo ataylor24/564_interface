@@ -1,4 +1,6 @@
 from tkinter import *
+import pymysql
+import credentials
 
 def create_police_buttons(root):
     def write_label_delete(win):

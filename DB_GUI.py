@@ -4,9 +4,11 @@ import pymysql
 import civ_v_buttons
 import police_v_buttons
 import spec_query_btns
+import credentials
 
 #Creates a connection
-db = pymysql.connect("localhost","root","password","pdviolence" )
+#connection = pymysql.connect(credentials.host,credentials.username,
+#credentials.password,credentials.db_name)
 
 def main():
     root = Tk()
