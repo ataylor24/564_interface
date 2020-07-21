@@ -40,38 +40,72 @@ def create_police_buttons(root):
         cause_label.grid(row=row,column=0)
         row+=1
 
-        return id_,name,date_of_death,cause
+        dept = Entry(win,width=30,bg="royalblue2")
+        dept.grid(row=row,column=1)
+        dept_label = Label(win, text="Worked For (Department)",bg="royalblue2")
+        dept_label.grid(row=row,column=0)
+        row+=1 
+
+        state_abbr = Entry(win,width=30,bg="royalblue2")
+        state_abbr.grid(row=row,column=1)
+        state_abbr_label = Label(win, text="State Abbreviation",bg="royalblue2")
+        state_abbr_label.grid(row=row,column=0)
+        row+=1
+
+        return id_,name,date_of_death,cause,dept,state_abbr
 
     def pop_up_insert():
         win = Toplevel(bg="black")
         win.wm_title("Insert Police Victim")
         win.geometry("600x200")
 
-        id_,name,date_of_death,cause = write_label(win)
+        id_,name,date_of_death,cause,dept,state_abbr = write_label(win)
 
         def insert():
-            #clears the text from the boxes
-            id_.delete(0, END)
-            name.delete(0, END)
-            date_of_death.delete(0, END)
-            cause.delete(0, END)
+            id_text = id_.get()
+            name_text = name.get()
+            date_of_death_text = date_of_death.get()
+            cause_text = cause.get()
+            dept_text = dept.get()
+            state_abbr_text = state_abbr.get()
+            connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
+            try:
+                with connection.cursor() as cursor:
+                    # Create a new record
+                    sql = "INSERT INTO officer (dead_officer_id,officer_name,dept,\
+                        cause_short,death_date,state_abbr) VALUES (%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sql, (id_text,name_text,dept_text,cause_text,date_of_death_text,state_abbr_text))
+                    connection.commit()
+                # connection is not autocommit by default. So you must commit to save
+                # your changes.
+            finally:
+                connection.close()
+                #clears the text from the boxes
+                id_.delete(0, END)
+                name.delete(0, END)
+                date_of_death.delete(0, END)
+                cause.delete(0, END)
+                dept.delete(0,END)
+                state_abbr.delete(0,END)
         a = Button(win, text="Insert into database", command=insert,highlightbackground="royalblue2")
-        a.grid(row=6, column=0)
+        a.grid(row=7, column=0)
 
     def pop_up_search():
         win = Toplevel(bg="black")
         win.wm_title("Search Police Victim")
         win.geometry("600x200")
 
-        id_,name,date_of_death,cause = write_label(win)
+        id_,name,date_of_death,cause,dept,state_abbr = write_label(win)
         def search():
             #clears the text from the boxes
             id_.delete(0, END)
             name.delete(0, END)
             date_of_death.delete(0, END)
             cause.delete(0, END)
+            dept.delete(0,END)
+            state_abbr.delete(0,END)
         c = Button(win, text="Search in database", command=search,highlightbackground="royalblue2")
-        c.grid(row=6, column=0)
+        c.grid(row=7, column=0)
             
     def pop_up_delete():
         win = Toplevel(bg="black")
