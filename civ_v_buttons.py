@@ -132,6 +132,10 @@ def create_civ_v_buttons(root):
         id_,name,age,race,date_of_death,gender,cause,city_name,state_name = write_labels(win)
 
         def search():
+            win = Toplevel(bg="black")
+            win.wm_title("Test")
+            win.geometry("500x350")
+
             #clears the text from the boxes
             id_text = id_.get()
             name_text = name.get()
@@ -150,7 +154,7 @@ def create_civ_v_buttons(root):
                     "and cname like '%" + name_text + "%'" + "and age like '%" + age_text + "%'" + \
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
-                    "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + "%'"
+                    "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
                     print(search_result)
