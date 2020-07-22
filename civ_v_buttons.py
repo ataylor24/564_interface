@@ -183,7 +183,22 @@ def create_civ_v_buttons(root):
         id_= write_label_delete(win)
         def delete():
             #clears the text from the boxes
-            id_.delete(0, END)
+            id_text = id_.get()
+            
+            try:
+                connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
+                with connection.cursor() as cursor:
+                    # Create a new record
+                    sql = "DELETE FROM civilian WHERE dead_civilian_id=%s"
+                    cursor.execute(sql, (id_text))
+                    connection.commit()
+                # connection is not autocommit by default. So you must commit to save
+                # your changes.
+
+            finally:
+                connection.close()
+                id_.delete(0, END)
+
             
         c = Button(win, text="Delete from database", command=delete,highlightbackground="royalblue2")
         c.grid(row=8, column=0)
