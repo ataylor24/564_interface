@@ -3,6 +3,25 @@ import pymysql
 import credentials
 
 def create_special_query_btns(root):
+    def popup_search_res(search_result):
+        win = Toplevel(bg="black")
+        win.wm_title("Search Result")
+        win.geometry("1200x800")
+        Label(win, text = 'Dead Officer ID', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
+        Label(win, text = 'Officer Name', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
+        Label(win, text = 'Department', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 2)
+        Label(win, text = 'Cause', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 3)
+        Label(win, text = 'Date of Death', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 4)
+        Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 5)
+        i = 0
+        for result_dict in search_result:
+            i += 1
+            Label(win, text = result_dict['dead_officer_id'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
+            Label(win, text = result_dict['officer_name'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
+            Label(win, text = result_dict['dept'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 3)
+            Label(win, text = result_dict['cause_short'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 3)
+            Label(win, text = result_dict['death_date'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 4)
+            Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 5)
     def write_label(win):
         row = 0
 
@@ -21,11 +40,11 @@ def create_special_query_btns(root):
 
         pd_name = write_label(win)
 
-        def insert():
+        def search():
             #clears the text from the boxes
             pd_name.delete(0, END)
             
-        a = Button(win, text="Search Database", command=insert,highlightbackground="royalblue2")
+        a = Button(win, text="Search Database", command=search,highlightbackground="royalblue2")
         a.grid(row=2, column=0)
 
     def pop_up_deaths():
@@ -47,11 +66,11 @@ def create_special_query_btns(root):
         win.geometry("600x200")
 
         pd_name = write_label(win)
-        def delete():
+        def search():
             #clears the text from the boxes
             pd_name.delete(0, END)
         
-        a = Button(win, text="Search Database", command=delete,highlightbackground="royalblue2")
+        a = Button(win, text="Search Database", command=search,highlightbackground="royalblue2")
         a.grid(row=2, column=0)
 
     row = 6
