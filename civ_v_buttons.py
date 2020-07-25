@@ -2,49 +2,9 @@ from tkinter import *
 import pymysql
 import credentials
 
-def dropdown_choices(attribute):
-    connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
-    cursorclass=pymysql.cursors.DictCursor)
-    with connection.cursor() as cursor:
-        sql = "SELECT distinct %s FROM civilian" % (attribute)
-        cursor.execute(sql)
-        choices = {dict_[attribute] for dict_ in cursor.fetchall()}
-    
-    return choices
-
-def date_dropdowns():
-    days = {i for i in range(32)}
-    months = {i for i in range(13)}
-    years = {i for i in range(2000,2021)}
-    return days,months,years
+search_result = []
 
 def create_civ_v_buttons(root):
-    def popup_search_res(search_result):
-        win = Toplevel(bg="black")
-        win.wm_title("Search Result")
-        win.geometry("1200x800")
-        Label(win, text = 'Civilian ID', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
-        Label(win, text = 'Civilian Name', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
-        Label(win, text = 'Age', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 2)
-        Label(win, text = 'Gender', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 3)
-        Label(win, text = 'Race', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 4)
-        Label(win, text = 'Date of Death', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 5)
-        Label(win, text = 'City', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 6)
-        Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 7)
-        Label(win, text = 'Cause', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 8)
-        i = 0
-        for result_dict in search_result:
-            i += 1
-            Label(win, text = result_dict['dead_civilian_id'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
-            Label(win, text = result_dict['cname'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
-            Label(win, text = result_dict['age'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 2)
-            Label(win, text = result_dict['gender'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 3)
-            Label(win, text = result_dict['race'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 4)
-            Label(win, text = result_dict['death_date'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 5)
-            Label(win, text = result_dict['city_name'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 6)
-            Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 7)
-            Label(win, text = result_dict['cause'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 8)
-
     def write_label_delete(win):
         row = 0
         #NOT SURE IF THIS SHOULD BE UP TO THE USER
@@ -54,6 +14,7 @@ def create_civ_v_buttons(root):
         id_label.grid(row=row,column=0)
 
         return id_
+
     def write_labels(win):
         row = 0
         #NOT SURE IF THIS SHOULD BE UP TO THE USER
@@ -75,25 +36,20 @@ def create_civ_v_buttons(root):
         age_label.grid(row=row,column=0)
         row+=1
 
-        race = StringVar(root)
-        race.set('Unspecified') # set the default option
-        race_dropdown = OptionMenu(win, race, *dropdown_choices("race"))
-        race_dropdown.grid(row = row, column =1)
+        race = Entry(win,width=30,bg="royalblue2")
+        race.grid(row=row,column=1)
         race_label = Label(win, text="Race",bg="royalblue2")
         race_label.grid(row=row,column=0)
         row+=1
 
-        dod = Entry(win,width=30,bg="royalblue2")
-        dod.grid(row=row,column=1)
+        date_of_death = Entry(win,width=30,bg="royalblue2")
+        date_of_death.grid(row=row,column=1)
         dod_label = Label(win, text="Date of Death",bg="royalblue2")
         dod_label.grid(row=row,column=0)
-        
         row+=1
 
-        gender = StringVar(root)
-        gender.set('Unspecified') # set the default option
-        gender_dropdown = OptionMenu(win, gender, *dropdown_choices("gender"))
-        gender_dropdown.grid(row = row, column =1)
+        gender = Entry(win,width=30,bg="royalblue2")
+        gender.grid(row=row,column=1)
         gender_label = Label(win, text="Gender",bg="royalblue2")
         gender_label.grid(row=row,column=0)
         row+=1
@@ -116,14 +72,14 @@ def create_civ_v_buttons(root):
         state_name_label.grid(row=row,column=0)
         row+=1
 
-        return id_,name,age,race,dod,gender,cause,city_name,state_name
+        return id_,name,age,race,date_of_death,gender,cause,city_name,state_name
 
     def pop_up_insert():
         win = Toplevel(bg="black")
         win.wm_title("Insert Civilian Victim")
         win.geometry("500x350")
 
-        id_,name,age,race,dod,gender,cause,city_name,state_name= write_labels(win)
+        id_,name,age,race,date_of_death,gender,cause,city_name,state_name = write_labels(win)
         
         
         def submit():
@@ -133,7 +89,7 @@ def create_civ_v_buttons(root):
             name_text = name.get()
             age_text = age.get()
             race_text = race.get()
-            date_of_death_text = dod.get()
+            date_of_death_text = date_of_death.get()
             gender_text = gender.get()
             cause_text = cause.get()
             city_name_text = city_name.get()
@@ -157,32 +113,32 @@ def create_civ_v_buttons(root):
                 id_.delete(0, END)
                 name.delete(0, END)
                 age.delete(0, END)
-                #race.delete(0, END)
-                dod.delete(0, END)
-                #gender.delete(0, END)
+                race.delete(0, END)
+                date_of_death.delete(0, END)
+                gender.delete(0, END)
                 cause.delete(0, END)
                 city_name.delete(0,END)
                 state_name.delete(0,END)
 
 
         a = Button(win, text="Insert into database", command=submit,highlightbackground="royalblue2")
-        a.grid(row=14, column=0)
+        a.grid(row=10, column=0)
 
     def pop_up_search():
         win = Toplevel(bg="black")
         win.wm_title("Search Civilian Victim")
         win.geometry("500x350")
 
-        id_,name,age,race,dod,gender,cause,city_name,state_name = write_labels(win)
+        id_,name,age,race,date_of_death,gender,cause,city_name,state_name = write_labels(win)
 
         def search():
             #clears the text from the boxes
             id_text = id_.get()
             name_text = name.get()
             age_text = age.get()
-            race_text = race.get() if "Unspecified" not in race.get() else ""
-            date_of_death_text = dod.get()
-            gender_text = gender.get() if "Unspecified" not in gender.get() else ""
+            race_text = race.get()
+            date_of_death_text = date_of_death.get()
+            gender_text = gender.get()
             cause_text = cause.get()
             city_name_text = city_name.get()
             state_name_text= state_name.get()
@@ -197,7 +153,6 @@ def create_civ_v_buttons(root):
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
-                    print(sql)
                     print(search_result)
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
@@ -207,17 +162,38 @@ def create_civ_v_buttons(root):
                 id_.delete(0, END)
                 name.delete(0, END)
                 age.delete(0, END)
-                #race.delete(0, END)
-                #date_of_death.delete(0, END)
-                #gender.delete(0, END)
+                race.delete(0, END)
+                date_of_death.delete(0, END)
+                gender.delete(0, END)
                 cause.delete(0, END)
                 city_name.delete(0,END)
                 state_name.delete(0,END)
-                popup_search_res(search_result)
-                
-                
+                win = Toplevel(bg="black")
+                win.wm_title("Search Result")
+                win.geometry("1200x800")
+                Label(win, text = 'Civilian ID', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
+                Label(win, text = 'Civilian Name', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
+                Label(win, text = 'Age', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 2)
+                Label(win, text = 'Gender', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 3)
+                Label(win, text = 'Race', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 4)
+                Label(win, text = 'Date of Death', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 5)
+                Label(win, text = 'City', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 6)
+                Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 7)
+                Label(win, text = 'Cause', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 8)
+                i = 0
+                for result_dict in search_result:
+                    i += 1
+                    Label(win, text = result_dict['dead_civilian_id'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
+                    Label(win, text = result_dict['cname'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
+                    Label(win, text = result_dict['age'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 2)
+                    Label(win, text = result_dict['gender'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 3)
+                    Label(win, text = result_dict['race'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 4)
+                    Label(win, text = result_dict['death_date'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 5)
+                    Label(win, text = result_dict['city_name'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 6)
+                    Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 7)
+                    Label(win, text = result_dict['cause'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 8)
         b = Button(win, text="Search in database", command=search,highlightbackground="royalblue2")
-        b.grid(row=14, column=0)
+        b.grid(row=10, column=0)
 
     def pop_up_delete():
         win = Toplevel(bg="black")
