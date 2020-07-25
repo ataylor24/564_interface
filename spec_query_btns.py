@@ -3,6 +3,30 @@ import pymysql
 import credentials
 
 def create_special_query_btns(root):
+    def popup_acts_res(act_result):
+        win = Toplevel(bg="black")
+        win.wm_title("Search Result")
+        win.geometry("1200x800")
+        Label(win, text = 'Department', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
+        Label(win, text = 'City', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
+        Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 2)
+        i = 0
+        for result_dict in act_result:
+            i += 1
+            Label(win, text = result_dict['dept'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
+            Label(win, text = result_dict['city_name'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
+            Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 2)
+    def popup_dept_death_res(pd_st_result):
+        win = Toplevel(bg="black")
+        win.wm_title("Search Result")
+        win.geometry("1200x800")
+        Label(win, text = 'Department', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
+        Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
+        i = 0
+        for result_dict in pd_st_result:
+            i += 1
+            Label(win, text = result_dict['dept'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
+            Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
     def popup_search_res(search_result):
         win = Toplevel(bg="black")
         win.wm_title("Search Result")
@@ -22,6 +46,7 @@ def create_special_query_btns(root):
             Label(win, text = result_dict['cause_short'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 3)
             Label(win, text = result_dict['death_date'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 4)
             Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 5)
+    
     def write_label(win):
         row = 0
 
@@ -35,14 +60,28 @@ def create_special_query_btns(root):
 
     def pop_up_acts():
         win = Toplevel(bg="black")
-        win.wm_title("Find where specific Police Departments act")
+        win.wm_title("Find Where Specific Police Departments Act")
         win.geometry("600x200")
 
         pd_name = write_label(win)
 
         def search():
             #clears the text from the boxes
-            pd_name.delete(0, END)
+            pd_text = pd_name.get()
+            try:
+                connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
+                cursorclass=pymysql.cursors.DictCursor)
+                with connection.cursor() as cursor:
+                    sql = "select a.city_name, a.state_abbr, d.dept from acts_in a, department d where a.dept_id = d.dept_id and d.dept like '%" + pd_text +"%';"
+                    cursor.execute(sql)
+                    act_result = cursor.fetchall()
+                    print(act_result)
+                    connection.commit()
+            finally:
+                connection.close()
+                pd_name.delete(0,END)
+                popup_acts_res(act_result)
+
             
         a = Button(win, text="Search Database", command=search,highlightbackground="royalblue2")
         a.grid(row=2, column=0)
@@ -55,7 +94,20 @@ def create_special_query_btns(root):
         pd_name = write_label(win)
         def search():
             #clears the text from the boxes
-            pd_name.delete(0, END)
+            pd_text = pd_name.get()
+            try:
+                connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
+                cursorclass=pymysql.cursors.DictCursor)
+                with connection.cursor() as cursor:
+                    sql = "select d.dept, e.state_abbr from department d, dept_deaths_in e where e.dept_id = d.dept_id and d.dept like '%" + pd_text + "%';"
+                    cursor.execute(sql)
+                    pd_st_result = cursor.fetchall()
+                    print(pd_st_result)
+                    connection.commit()
+            finally:
+                connection.close()
+                pd_name.delete(0,END)
+                popup_dept_death_res(pd_st_result)
             
         a = Button(win, text="Search Database", command=search,highlightbackground="royalblue2")
         a.grid(row=2, column=0)
