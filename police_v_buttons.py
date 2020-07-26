@@ -9,6 +9,7 @@ def dropdown_choices(attribute):
         sql = "SELECT distinct %s FROM officer" % (attribute)
         cursor.execute(sql)
         choices = {dict_[attribute] for dict_ in cursor.fetchall()}
+        choices = sorted(choices)
     
     return choices
 
@@ -91,8 +92,16 @@ def create_police_buttons(root):
 
         # creates label for officer location of death (state) and the text box for user 
         # to input the desired insert/search criterion
-        state_abbr = Entry(win,width=30,bg="royalblue2")
-        state_abbr.grid(row=row,column=1)
+        # state_abbr = Entry(win,width=30,bg="royalblue2")
+        # state_abbr.grid(row=row,column=1)
+        # state_abbr_label = Label(win, text="State Abbreviation",bg="royalblue2")
+        # state_abbr_label.grid(row=row,column=0)
+        # row+=1
+
+        state_abbr = StringVar(root)
+        state_abbr.set('Unspecified') # set the default option
+        state_abbr_dropdown = OptionMenu(win, state_abbr, *dropdown_choices("state_abbr"))
+        state_abbr_dropdown.grid(row = row, column =1)
         state_abbr_label = Label(win, text="State Abbreviation",bg="royalblue2")
         state_abbr_label.grid(row=row,column=0)
         row+=1
@@ -183,7 +192,6 @@ def create_police_buttons(root):
                 name.delete(0, END)
                 dod.delete(0, END)
                 dept.delete(0,END)
-                state_abbr.delete(0,END)
                 popup_search_res(search_result)
 
         #establishes the button for searching the database

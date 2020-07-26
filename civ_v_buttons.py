@@ -10,6 +10,7 @@ def dropdown_choices(attribute):
         sql = "SELECT distinct %s FROM civilian" % (attribute)
         cursor.execute(sql)
         choices = {dict_[attribute] for dict_ in cursor.fetchall()}
+        choices = sorted(choices)
     
     return choices
 
@@ -121,9 +122,17 @@ def create_civ_v_buttons(root):
 
         # creates label for civilian location of death (state) and the text box for user 
         # to input the desired insert/search criterion
-        state_name = Entry(win,width=30,bg="royalblue2")
-        state_name.grid(row=row,column=1)
-        state_name_label = Label(win, text="Location of Death (State)",bg="royalblue2")
+        # state_name = Entry(win,width=30,bg="royalblue2")
+        # state_name.grid(row=row,column=1)
+        # state_name_label = Label(win, text="Location of Death (State)",bg="royalblue2")
+        # state_name_label.grid(row=row,column=0)
+        # row+=1
+
+        state_name = StringVar(root)
+        state_name.set('Unspecified') # set the default option
+        state_name_dropdown = OptionMenu(win, state_name, *dropdown_choices("state_abbr"))
+        state_name_dropdown.grid(row = row, column =1)
+        state_name_label = Label(win, text="State Name",bg="royalblue2")
         state_name_label.grid(row=row,column=0)
         row+=1
 
@@ -177,7 +186,6 @@ def create_civ_v_buttons(root):
                 dod.delete(0, END)
                 cause.delete(0, END)
                 city_name.delete(0,END)
-                state_name.delete(0,END)
 
         #establishes the button to insert the provided info into the db
         a = Button(win, text="Insert into database", command=submit,highlightbackground="royalblue2")
@@ -230,7 +238,6 @@ def create_civ_v_buttons(root):
                 dod.delete(0, END)
                 cause.delete(0, END)
                 city_name.delete(0,END)
-                state_name.delete(0,END)
                 popup_search_res(search_result)
                 
         #establishes the button for searching the database
