@@ -28,7 +28,7 @@ def create_civ_v_buttons(root):
         title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE"
         listbox.insert(END, title_row)
         for result_dict in search_result:
-            row = ""+result_dict['dead_civilian_id']+", "+result_dict['cname']+", "\
+            row = ""+str(result_dict['dead_civilian_id'])+", "+result_dict['cname']+", "\
             +result_dict['age']+", "+result_dict['gender']+", "+result_dict['race']+\
             ", "+result_dict['death_date']+", "+result_dict['city_name']+", "+result_dict['state_abbr']\
             +", "+result_dict['cause']
@@ -210,13 +210,19 @@ def create_civ_v_buttons(root):
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
                     sql = "SELECT * FROM civilian WHERE dead_civilian_id LIKE '%" + id_text + "%'" + \
-                    "and cname like '%" + name_text + "%'" + "and age like '%" + age_text + "%'" + \
+                    "and cname like '%"
+                    name_list = name_text.split(' ')
+                    sql = sql + name_list[0] + "%'"
+                    for i in range(1,len(name_list)):
+                        sql = sql + "or cname like '%" + name_list[i] + "%'"
+                    sql = sql + "and age like '%" + age_text + "%'" + \
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
+                    print(sql)
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
-                    print(sql)
+                    
                     print(search_result)
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
