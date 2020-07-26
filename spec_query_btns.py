@@ -67,7 +67,7 @@ def create_special_query_btns(root):
     def state_result_popup(search_result):
         win = Toplevel(bg="black")
         win.wm_title("Search result")
-        win.geometry("1200x800")
+        win.geometry("600x300")
         Label(win, text= 'State Abbreviation', borderwidth = 1, bg="royalblue2").grid(row = 0, column = 0)
         Label(win, text= 'State Name', borderwidth = 1, bg="royalblue2").grid(row = 0, column = 1)
         Label(win, text= 'Population 2010', borderwidth = 1, bg="royalblue2").grid(row = 0, column = 2)
@@ -93,13 +93,6 @@ def create_special_query_btns(root):
     
     def write_label_state(win):
         row = 0
-        # gender.set('Unspecified') # set the default option
-        # gender_dropdown = OptionMenu(win, gender, *dropdown_choices("gender"))
-        # gender_dropdown.grid(row = row, column =1)
-        # pd_name = Entry(win,width=30,bg="royalblue2")
-        # pd_name.grid(row=row,column=1)
-
-        states = {'Alabama'}
 
         pd_name = StringVar(root)
         pd_name.set('Unspecified')
