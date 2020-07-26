@@ -26,24 +26,29 @@ def create_special_query_btns(root):
         #Label(win, text = 'City', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
         #Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 2)
         title = "Department, City, State"
-        i = 0
         lsbox.insert(END, title)
         for result_dict in act_result:
             row = ""+result_dict['dept']+\
             ", "+result_dict['city_name']+", "+result_dict['state_abbr']
             lsbox.insert(END, row)
         lsbox.pack(side=LEFT, fill=BOTH)
+        scrbar.config(command=lsbox.yview)
     def popup_dept_death_res(pd_st_result):
         win = Toplevel(bg="black")
         win.wm_title("Search Result")
         win.geometry("1200x800")
-        Label(win, text = 'Department', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
-        Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
-        i = 0
+        sbar = Scrollbar(win)
+        sbar.pack(side = RIGHT, fill = Y)
+        lbox = Listbox(win, yscrollcommand=sbar.set,width=150,bg="black",fg="royalblue2")
+        title = "Department, State"
+        #Label(win, text = 'Department', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 0)
+        #Label(win, text = 'State', borderwidth = 1,bg="royalblue2").grid(row = 0, column = 1)
+        lbox.insert(END, title)
         for result_dict in pd_st_result:
-            i += 1
-            Label(win, text = result_dict['dept'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 0)
-            Label(win, text = result_dict['state_abbr'], borderwidth = 1,bg="royalblue2").grid(row = i, column = 1)
+           row = ""+result_dict['dept'] +","+result_dict['state_abbr']
+           lbox.insert(END, row)
+        lbox.pack(side=LEFT, fill=BOTH)
+        sbar.config(command=lbox.yview)
     def popup_search_res(search_result):
         win = Toplevel(bg="black")
         win.wm_title("Search Result")
