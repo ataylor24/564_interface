@@ -1,6 +1,7 @@
 from tkinter import *
 import pymysql
 import credentials
+import re
 
 def dropdown_choices(attribute):
     connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
@@ -127,8 +128,8 @@ def create_police_buttons(root):
             dept_text = dept.get()
             state_abbr_text = state_abbr.get()
 
-            r = re.compile('.*/.*/.*')
-            if r.match(date_of_death_text) is None and date_of_death_text!="":
+            r = re.compile('../../....')
+            if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
@@ -180,10 +181,10 @@ def create_police_buttons(root):
             date_of_death_text = dod.get()
             cause_text = cause.get() if "Unspecified" not in cause.get() else ""
             dept_text = dept.get()
-            state_abbr_text = state_abbr.get()
+            state_abbr_text = state_abbr.get()  if "Unspecified" not in state_abbr.get() else ""
 
-            r = re.compile('.*/.*/.*')
-            if r.match(date_of_death_text) is None and date_of_death_text!="":
+            r = re.compile('../../....')
+            if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")

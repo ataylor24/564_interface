@@ -223,10 +223,10 @@ def create_civ_v_buttons(root):
             gender_text = gender.get() if "Unspecified" not in gender.get() else ""
             cause_text = cause.get()
             city_name_text = city_name.get()
-            state_name_text= state_name.get()
+            state_name_text= state_name.get() if "Unspecified" not in state_name.get() else ""
 
             r = re.compile('../../....')
-            if r.match(date_of_death_text) is None and len(date_of_death_text)>0:
+            if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
@@ -244,7 +244,7 @@ def create_civ_v_buttons(root):
                     sql = "SELECT * FROM civilian WHERE dead_civilian_id LIKE '%" + id_text + "%'" + \
                     "and cname like '%"
                     name_list = name_text.split(' ')
-                    sql = sql + name_list[0] + "%'"
+                    sql = sql + name_text + "or like"+name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or cname like '%" + name_list[i] + "%'"
                     sql = sql + "and age like '%" + age_text + "%'" + \
