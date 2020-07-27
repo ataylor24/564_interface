@@ -15,7 +15,7 @@ def main():
     #sets up the image above the title
     im_frame = Frame(root, width=500, height=400)
     im_frame.grid(row=0, column=0)
-    db_im= PhotoImage(file="scotch_job1.png")
+    db_im= PhotoImage(file="police_lights.png")
     db_im_label= Label(im_frame, image=db_im,bg="black")
     db_im_label.grid(row=0,column=1)
 
