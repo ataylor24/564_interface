@@ -30,7 +30,7 @@ def create_police_buttons(root):
         listbox.insert(END, title_row)
         for result_dict in search_result:
             row = ""+str(result_dict['dead_officer_id'])+", "+result_dict['officer_name']+", "\
-            +result_dict['dept']+", "+result_dict['cause_short']+", "+result_dict['death_date']+", "+result_dict['state_abbr']
+            +str(result_dict['dept'])+", "+result_dict['cause_short']+", "+result_dict['death_date']+", "+result_dict['state_abbr']
             listbox.insert(END, row)
         listbox.pack(side=LEFT, fill=BOTH)
 

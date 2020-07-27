@@ -244,7 +244,7 @@ def create_civ_v_buttons(root):
                     sql = "SELECT * FROM civilian WHERE dead_civilian_id LIKE '%" + id_text + "%'" + \
                     "and cname like '%"
                     name_list = name_text.split(' ')
-                    sql = sql + name_text + "or like"+name_list[0] + "%'"
+                    sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or cname like '%" + name_list[i] + "%'"
                     sql = sql + "and age like '%" + age_text + "%'" + \
