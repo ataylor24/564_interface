@@ -162,8 +162,8 @@ def create_civ_v_buttons(root):
             city_name_text = city_name.get()
             state_name_text= state_name.get()
             
-            r = re.compile('.*/.*/.*')
-            if r.match(date_of_death_text) is None:
+            r = re.compile('../../....')
+            if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
@@ -225,8 +225,8 @@ def create_civ_v_buttons(root):
             city_name_text = city_name.get()
             state_name_text= state_name.get()
 
-            r = re.compile('.*/.*/.*')
-            if r.match(date_of_death_text) is None and date_of_death_text!="":
+            r = re.compile('../../....')
+            if r.match(date_of_death_text) is None and len(date_of_death_text)>0:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
