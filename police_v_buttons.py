@@ -68,7 +68,7 @@ def create_police_buttons(root):
         # to input the desired insert/search criterion
         dod = Entry(win,width=30,bg="royalblue2")
         dod.grid(row=row,column=1)
-        dod_label = Label(win, text="Date of Death",bg="royalblue2")
+        dod_label = Label(win, text="Date of Death (mm/dd/yyyy)",bg="royalblue2")
         dod_label.grid(row=row,column=0)
         row+=1
 
@@ -126,6 +126,18 @@ def create_police_buttons(root):
             cause_text = cause.get() if "Unspecified" in cause.get() else ""
             dept_text = dept.get()
             state_abbr_text = state_abbr.get()
+
+            r = re.compile('.*/.*/.*')
+            if r.match(date_of_death_text) is None and date_of_death_text!="":
+                win = Toplevel(bg="black")
+                win.wm_title("Incorrect Formatting")
+                win.geometry("700x350")
+
+                title = Label(win, text="Incorrect formatting of the date, should be 'mm/dd/yyyy'",fg="red",bg="black")
+                title.grid(row=1,column=0,columnspan=2,ipadx=50)
+                title.config(font=("Times New Roman", 20))
+                return
+
             #establishes the connection with the db
             connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
             try:
@@ -169,6 +181,18 @@ def create_police_buttons(root):
             cause_text = cause.get() if "Unspecified" not in cause.get() else ""
             dept_text = dept.get()
             state_abbr_text = state_abbr.get()
+
+            r = re.compile('.*/.*/.*')
+            if r.match(date_of_death_text) is None and date_of_death_text!="":
+                win = Toplevel(bg="black")
+                win.wm_title("Incorrect Formatting")
+                win.geometry("700x350")
+
+                title = Label(win, text="Incorrect formatting of the date, should be 'mm/dd/yyyy'",fg="red",bg="black")
+                title.grid(row=1,column=0,columnspan=2,ipadx=50)
+                title.config(font=("Times New Roman", 20))
+                return
+
             try:
                 #establishes connection with db
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
