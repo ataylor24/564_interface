@@ -158,7 +158,7 @@ def create_police_buttons(root):
                 dod.delete(0, END)
                 #cause.delete(0, END)
                 dept.delete(0,END)
-                state_abbr.delete(0,END)
+                #state_abbr.delete(0,END)
         
         #establishes the button to insert the provided info into the db
         a = Button(win, text="Insert into database", command=insert,highlightbackground="royalblue2")
