@@ -205,8 +205,6 @@ def create_police_buttons(root):
                     "and cause_short like '%" + cause_text + "%'" + "and state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
-                    print(sql)
-                    print(search_result)
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.

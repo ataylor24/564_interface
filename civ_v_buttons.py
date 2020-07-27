@@ -251,11 +251,11 @@ def create_civ_v_buttons(root):
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
-                    print(sql)
+                    
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
                     
-                    print(search_result)
+                    
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
