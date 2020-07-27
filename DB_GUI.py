@@ -15,18 +15,16 @@ def main():
     #sets up the image above the title
     im_frame = Frame(root, width=500, height=400)
     im_frame.grid(row=0, column=0)
-    db_im= PhotoImage(file="image0.png")
+    db_im= PhotoImage(file="scotch_job1.png")
     db_im_label= Label(im_frame, image=db_im,bg="black")
-    db_im_label.grid(row=0,column=2)
+    db_im_label.grid(row=0,column=1)
 
+   
     #sets up the title in the top lefthand corner of the screen
     title = Label(root, text="Deaths related to Law Enforcement",fg="royalblue2",bg="black")
-    title.grid(row=1,column=0,columnspan=2,ipadx=50)
+    title.grid(row=0,column=1,columnspan=2,ipadx=50)
     title.config(font=("Times New Roman", 36))
-    #sets up the 'nudge' below the title
-    interact_nudge = Label(root, text="Click one of the following options to interact with the database...",fg="royalblue2",bg="black")
-    interact_nudge.grid(row=2,column=0,columnspan=2,ipadx=50)
-    interact_nudge.config(font=("Times New Roman italic", 20))
+     
     
     #sets up the labels for the Civilian section of the GUI
     civ_label = Label(root, text="Civilian Records",fg="darkgoldenrod3",bg="black")
