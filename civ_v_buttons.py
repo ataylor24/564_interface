@@ -15,6 +15,17 @@ def dropdown_choices(attribute):
     
     return choices
 
+def dept_drop_choices():
+    connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
+    cursorclass=pymysql.cursors.DictCursor)
+    with connection.cursor() as cursor:
+        sql = "select distinct dept from department order by dept asc"
+        cursor.execute(sql)
+        choices = {dict_["dept"] for dict_ in cursor.fetchall()}
+        choices = sorted(choices)
+    
+    return choices
+
 #code for creating each of the civilian buttons and the subsequently created popup windows
 def create_civ_v_buttons(root):
     #Handles the creation of the popup window containing the search results
@@ -72,7 +83,7 @@ def create_civ_v_buttons(root):
         # creates dropdown for civilian race and queries the DB so the user 
         # may select their desired insert/search criterion
         race = StringVar(root)
-        race.set('Unspecified') # set the default option
+        race.set('Race unspecified') # set the default option
         race_dropdown = OptionMenu(win, race, *dropdown_choices("race"))
         race_dropdown.grid(row = row, column =1)
         race_label = Label(win, text="Race",bg="royalblue2")
@@ -105,6 +116,17 @@ def create_civ_v_buttons(root):
         cause_label.grid(row=row,column=0)
         row+=1
 
+        # creates label for civilian cause of death and the text box for user 
+        # to input the desired insert/search criterion
+        dept = StringVar(root)
+        dept.set('Unspecified') # set the default option
+        dept_dropdown = OptionMenu(win, dept, *dept_drop_choices())
+        dept_dropdown.grid(row = row, column =1)
+        dept_label = Label(win, text="Department Killed by",bg="royalblue2")
+        dept_label.grid(row=row,column=0)
+        row+=1
+
+
         # creates label for civilian location of death (city) and the text box for user 
         # to input the desired insert/search criterion
         city_name = Entry(win,width=30,bg="royalblue2")
@@ -121,7 +143,7 @@ def create_civ_v_buttons(root):
         state_name_label.grid(row=row,column=0)
         row+=1
 
-        return name,age,race,dod,gender,cause,city_name,state_name
+        return name,age,race,dod,gender,cause,dept,city_name,state_name
 
     #creates the popup window for the 'insert new civilian victim' button
     def pop_up_insert():
@@ -131,7 +153,7 @@ def create_civ_v_buttons(root):
         win.geometry("500x350")
 
         #writes the labels/entry boxes in the window
-        name,age,race,dod,gender,cause,city_name,state_name= write_labels(win)
+        name,age,race,dod,gender,cause,dept,city_name,state_name= write_labels(win)
         
         
         def submit():
@@ -142,6 +164,7 @@ def create_civ_v_buttons(root):
             date_of_death_text = dod.get()
             gender_text = gender.get()
             cause_text = cause.get()
+            dept_text= dept.get()
             city_name_text = city_name.get()
             state_name_text= state_name.get()
             
@@ -160,15 +183,24 @@ def create_civ_v_buttons(root):
                 #establishes the connection with the db
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
                 with connection.cursor() as cursor:
+                    #finds unique id for new civilian entry
                     retrieve_max_id = "select max(dead_civilian_id) from civilian"
                     cursor.execute(retrieve_max_id)
                     id_text = int(cursor.fetchall()[0][0]) + 1
+                    #inserts into the killed_by database
+                    find_dept_id = "select dept_id from department where dept = \"%s\"" %(dept_text)
+                    cursor.execute(find_dept_id)
+                    dept_id = cursor.fetchall()[0][0]
+
                     # Create a new record
                     sql = "INSERT INTO civilian (dead_civilian_id,cname,\
                         age,gender,race,death_date,city_name,state_abbr,cause) \
                             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                     cursor.execute(sql, (id_text,name_text,age_text, 
                     gender_text,race_text,date_of_death_text,city_name_text,state_name_text,cause_text))
+                    
+                    insert_kb = "insert into killed_by (dead_civilian_id,dept_id) values(%s,%s)"
+                    cursor.execute(insert_kb, (id_text,dept_id))
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
@@ -196,13 +228,13 @@ def create_civ_v_buttons(root):
         win.geometry("500x350")
 
         #writes the labels/entry boxes
-        name,age,race,dod,gender,cause,city_name,state_name = write_labels(win)
+        name,age,race,dod,gender,cause,dept,city_name,state_name = write_labels(win)
 
         def search():
             #retrieves the text from the boxes
             name_text = name.get()
             age_text = age.get()
-            race_text = race.get() if "Unspecified" not in race.get() else ""
+            race_text = race.get()
             date_of_death_text = dod.get()
             gender_text = gender.get() if "Unspecified" not in gender.get() else ""
             cause_text = cause.get()
@@ -235,6 +267,8 @@ def create_civ_v_buttons(root):
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"\
                     + "and  c.dead_civilian_id = k.dead_civilian_id and k.dept_id = d.dept_id"  
+
+                    print(sql)
                     
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
