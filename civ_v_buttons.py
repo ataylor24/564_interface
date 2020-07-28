@@ -242,7 +242,7 @@ def create_civ_v_buttons(root):
             date_of_death_text = dod.get()
             gender_text = gender.get() if "Unspecified" not in gender.get() else ""
             cause_text = cause.get() if "Unspecified" not in gender.get() else ""
-            dept_text = dept.get() if "Unspecified" not in gender.get() else ""
+            dept_text = dept.get() if "Unspecified" not in dept.get() else ""
             city_name_text = city_name.get()
             state_name_text= state_name.get() if "Unspecified" not in state_name.get() else ""
 
@@ -267,6 +267,7 @@ def create_civ_v_buttons(root):
                     sql = "SELECT * FROM civilian c inner join killed_by k on c.dead_civilian_id = k.dead_civilian_id\
                         inner join department d on k.dept_id = d.dept_id WHERE (cname like '%"
                     name_list = name_text.split(' ')
+                    dept_list = dept_text.split('\'')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or cname like '%" + name_list[i] + "%'"
@@ -274,8 +275,7 @@ def create_civ_v_buttons(root):
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"\
-                    +" and d.dept like '%" + dept_text +"%'" + " and c.dead_civilian_id = k.dead_civilian_id and k.dept_id = d.dept_id"  
-                    
+                    +" and d.dept like '%" + dept_list[0] +"%'" + " and c.dead_civilian_id = k.dead_civilian_id and k.dept_id = d.dept_id"  
                     
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
