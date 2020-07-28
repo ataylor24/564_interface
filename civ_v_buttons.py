@@ -274,6 +274,7 @@ def create_civ_v_buttons(root):
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"\
                     +" and d.dept like '%" + dept_text +"%'" + " and c.dead_civilian_id = k.dead_civilian_id and k.dept_id = d.dept_id"  
                     
+                    print(sql)
                     
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
