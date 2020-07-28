@@ -142,7 +142,7 @@ def create_civ_v_buttons(root):
         state_name.set('Unspecified') # set the default option
         state_name_dropdown = OptionMenu(win, state_name, *dropdown_choices("state_abbr"))
         state_name_dropdown.grid(row = row, column =1)
-        state_name_label = Label(win, text="State Name",bg="royalblue2")
+        state_name_label = Label(win, text="Location of Death (State)",bg="royalblue2")
         state_name_label.grid(row=row,column=0)
         row+=1
 
