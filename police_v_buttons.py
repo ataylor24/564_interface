@@ -150,7 +150,7 @@ def create_police_buttons(root):
                     retrieve_max_id = "select max(dead_officer_id) from officer"
                     cursor.execute(retrieve_max_id)
                     id_text = int(cursor.fetchall()[0][0]) + 1
-                    print(id_text)
+                    
 
                     find_dept_id = "select dept_id from department where dept = \"%s\"" %(dept_text)
                     cursor.execute(find_dept_id)
@@ -219,7 +219,7 @@ def create_police_buttons(root):
                     + "and o.death_date like '%" + date_of_death_text + "%'" + \
                     "and o.cause_short like '%" + cause_text + "%'" + "and o.state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
-                    print(sql)
+                   
                     search_result = cursor.fetchall()
                    
                     connection.commit()
