@@ -27,13 +27,13 @@ def create_civ_v_buttons(root):
         scrollbar = Scrollbar(win)
         scrollbar.pack(side=RIGHT, fill=Y)
         listbox = Listbox(win, yscrollcommand=scrollbar.set,width=150,bg="black",fg="royalblue2")
-        title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE"
+        title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE, DEPARTMENT"
         listbox.insert(END, title_row)
         for result_dict in search_result:
             row = ""+str(result_dict['dead_civilian_id'])+", "+result_dict['cname']+", "\
             +result_dict['age']+", "+result_dict['gender']+", "+result_dict['race']+\
             ", "+result_dict['death_date']+", "+result_dict['city_name']+", "+result_dict['state_abbr']\
-            +", "+result_dict['cause']
+            +", "+result_dict['cause'] + "," +result_dict['dept']
             listbox.insert(END, row)
         listbox.pack(side=LEFT, fill=BOTH)
 
@@ -225,7 +225,7 @@ def create_civ_v_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM civilian WHERE (cname like '%"
+                    sql = "SELECT * FROM civilian c, killed_by k, department d WHERE (cname like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
@@ -233,11 +233,12 @@ def create_civ_v_buttons(root):
                     sql = sql + ") and age like '%" + age_text + "%'" + \
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
-                    "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
+                    "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"\
+                    + "and  c.dead_civilian_id = k.dead_civilian_id and k.dept_id = d.dept_id"  
                     
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
-                    
+                    print(search_result)
                     
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
