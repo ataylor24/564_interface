@@ -34,12 +34,14 @@ def create_civ_v_buttons(root):
         win = Toplevel(bg="black")
         win.wm_title("Search Result")
         win.geometry("1200x800")
-        #creates the category labels
+        #creates the scrollbar and listbox
         scrollbar = Scrollbar(win)
         scrollbar.pack(side=RIGHT, fill=Y)
         listbox = Listbox(win, yscrollcommand=scrollbar.set,width=150,bg="black",fg="royalblue2")
+        #insert title to list box with name of each column
         title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE, DEPARTMENT RESPONSIBLE"
         listbox.insert(END, title_row)
+        #iterate through search_result and retrieve all relevant data
         for result_dict in search_result:
             row = ""+str(result_dict['dead_civilian_id'])+", "+result_dict['cname']+", "\
             +result_dict['age']+", "+result_dict['gender']+", "+result_dict['race']+\
@@ -195,7 +197,7 @@ def create_civ_v_buttons(root):
                     cursor.execute(find_dept_id)
                     dept_id = cursor.fetchall()[0][0]
 
-                    # Create a new record
+                    # Create a new record and insert into civilian and killed_by
                     sql = "INSERT INTO civilian (dead_civilian_id,cname,\
                         age,gender,race,death_date,city_name,state_abbr,cause) \
                             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -260,8 +262,8 @@ def create_civ_v_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    #inserts into the killed_by database
-
+                    #Get information on civilian to get information on the civilian also join civlian on killed_by 
+                    #and department to get information about the department(s) responsible for the civilian's death
                     sql = "SELECT * FROM civilian c inner join killed_by k on c.dead_civilian_id = k.dead_civilian_id\
                         inner join department d on k.dept_id = d.dept_id WHERE (cname like '%"
                     name_list = name_text.split(' ')
@@ -283,7 +285,7 @@ def create_civ_v_buttons(root):
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
             finally:
-                #clears the text from the boxes
+                #clears the text from the boxes and opens up relavent search pop up
                 connection.close()
                 name.delete(0, END)
                 age.delete(0, END)
@@ -312,7 +314,7 @@ def create_civ_v_buttons(root):
                 #Establishes a conenction with the db
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
                 with connection.cursor() as cursor:
-                    # removes a record
+                    # removes a record from both killed_by and civilian
                     sql = "DELETE FROM killed_by WHERE dead_civilian_id =%s"
                     cursor.execute(sql, (id_text))
                     connection.commit()
