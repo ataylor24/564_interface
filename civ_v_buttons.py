@@ -27,7 +27,7 @@ def create_civ_v_buttons(root):
         scrollbar = Scrollbar(win)
         scrollbar.pack(side=RIGHT, fill=Y)
         listbox = Listbox(win, yscrollcommand=scrollbar.set,width=150,bg="black",fg="royalblue2")
-        title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE, DEPARTMENT"
+        title_row = "DEAD_CIVILIAN_ID, CIVILIAN_NAME, AGE, GENDER, RACE, DEATH_DATE, LOC OF DEATH (CITY), LOC OF DEATH (STATE), CAUSE, DEPARTMENT RESPONSIBLE"
         listbox.insert(END, title_row)
         for result_dict in search_result:
             row = ""+str(result_dict['dead_civilian_id'])+", "+result_dict['cname']+", "\
@@ -238,7 +238,7 @@ def create_civ_v_buttons(root):
                     
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
-                    print(search_result)
+                    
                     
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save

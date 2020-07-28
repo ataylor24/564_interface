@@ -30,7 +30,7 @@ def create_police_buttons(root):
         listbox.insert(END, title_row)
         for result_dict in search_result:
             row = ""+str(result_dict['dead_officer_id'])+", "+result_dict['officer_name']+", "\
-            +str(result_dict['dept'])+", "+result_dict['cause_short']+", "+result_dict['death_date']+", "+result_dict['state_abbr']
+            +str(result_dict['d.dept'])+", "+result_dict['cause_short']+", "+result_dict['death_date']+", "+result_dict['state_abbr']
             listbox.insert(END, row)
         listbox.pack(side=LEFT, fill=BOTH)
 
@@ -201,6 +201,7 @@ def create_police_buttons(root):
                     "and o.cause_short like '%" + cause_text + "%'" + "and o.state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
+                   
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
