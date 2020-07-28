@@ -148,8 +148,8 @@ def create_special_query_btns(root):
         pd_name = write_label(win)
         #search function activated when user clicks the search button
         def search():
-            #get user's input
-            pd_text = pd_name.get()
+            #get user's input 
+            pd_list = pd_name.get().split(" ")
             try:
                 #open a connection using mysql credentials
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
@@ -157,7 +157,11 @@ def create_special_query_btns(root):
                 with connection.cursor() as cursor:
                     #create sql query: query takes department name, matches it with the appropriate dept_id and uses relavent information
                     #from dept_deaths_in
-                    sql = "select d.dept, e.state_abbr from department d, dept_deaths_in e where e.dept_id = d.dept_id and d.dept like '%" + pd_text + "%';"
+                    sql = "select d.dept, e.state_abbr from department d, dept_deaths_in e where e.dept_id = d.dept_id and (d.dept like '%" + pd_list[0] + "%'"
+                    for i in range(1,len(pd_list)):
+                        sql = sql + "or d.dept like '%" + pd_list[i] + "%'"
+                    sql= sql + ")"
+                    print(sql)
                     cursor.execute(sql)
                     #get results of query as list of dictionaries
                     pd_st_result = cursor.fetchall()
@@ -177,18 +181,18 @@ def create_special_query_btns(root):
         win.wm_title("Find Information on States")
         win.geometry("600x200")
         #set up search box
-        pd_name = write_label_state(win)
+        st_name = write_label_state(win)
         #search function activated when user clicks the search button
         def search():
             #get user input from the search box
-            pd_text = pd_name.get()
+            st_text = st_name.get()
             try:
                 #open up a connection using mysql credentials
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
                     #create sql query: takes a state abbreviation and provides relevant information
-                    sql = "select * from state where state_abbr like '%" + pd_text + "%';"
+                    sql = "select * from state where state_abbr like '%" + st_text + "%';"
                     cursor.execute(sql)
                     #get results of query as list of dictionaries
                     state_result = cursor.fetchall()
