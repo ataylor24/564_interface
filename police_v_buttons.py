@@ -199,15 +199,15 @@ def create_police_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM officer WHERE dead_officer_id LIKE '%" + id_text + "%'" + \
-                    "and officer_name like '%"
+                    sql = "SELECT * FROM officer o,department d WHERE o.dead_officer_id LIKE '%" + id_text + "%'" + \
+                    "and o.officer_name like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
-                        sql = sql + "or officer_name like '%" + name_list[i] + "%'"
-                    sql = sql+"and dept like '%" + dept_text + "%'"\
-                    + "and death_date like '%" + date_of_death_text + "%'" + \
-                    "and cause_short like '%" + cause_text + "%'" + "and state_abbr like '%" + state_abbr_text + "%'"
+                        sql = sql + "or o.officer_name like '%" + name_list[i] + "%'"
+                    sql = sql+"and o.dept like d.dept_id and d.dept like '%" + dept_text + "%'"\
+                    + "and o.death_date like '%" + date_of_death_text + "%'" + \
+                    "and o.cause_short like '%" + cause_text + "%'" + "and o.state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
                     search_result = cursor.fetchall()
                     connection.commit()
