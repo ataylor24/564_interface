@@ -104,7 +104,6 @@ def create_special_query_btns(root):
         pd_name_label.grid(row=row,column=0)
         row+=1
 
-        print(pd_name)
         return pd_name
 
     #Pop up for when user clicks on Find Where Specific Police Departments Have Killed button
