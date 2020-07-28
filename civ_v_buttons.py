@@ -314,9 +314,13 @@ def create_civ_v_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
                 with connection.cursor() as cursor:
                     # removes a record
+                    sql = "DELETE FROM killed_by WHERE dead_civilian_id =%s"
+                    cursor.execute(sql, (id_text))
+                    connection.commit()
                     sql = "DELETE FROM civilian WHERE dead_civilian_id=%s"
                     cursor.execute(sql, (id_text))
                     connection.commit()
+                   
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
 
