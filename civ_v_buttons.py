@@ -285,7 +285,7 @@ def create_civ_v_buttons(root):
                 name.delete(0, END)
                 age.delete(0, END)
                 dod.delete(0, END)
-                cause.delete(0, END)
+                
                 city_name.delete(0,END)
                 popup_search_res(search_result)
                 
