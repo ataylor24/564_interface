@@ -239,7 +239,7 @@ def create_civ_v_buttons(root):
             race_text = race.get()
             date_of_death_text = dod.get()
             gender_text = gender.get() if "Unspecified" not in gender.get() else ""
-            cause_text = cause.get()
+            cause_text = cause.get() if "Unspecified" not in gender.get() else ""
             city_name_text = city_name.get()
             state_name_text= state_name.get() if "Unspecified" not in state_name.get() else ""
 
