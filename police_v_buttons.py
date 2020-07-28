@@ -14,6 +14,18 @@ def dropdown_choices(attribute):
     
     return choices
 
+def dept_dropdown_choices():
+    connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
+    
+    cursorclass=pymysql.cursors.DictCursor)
+    with connection.cursor() as cursor:
+        sql = "select distinct dept from department order by dept asc"
+        cursor.execute(sql)
+        choices = {dict_["dept"] for dict_ in cursor.fetchall()}
+        choices = sorted(choices)
+
+    return choices
+   
 #code for creating each of the police officer buttons and the subsequently created popup windows
 def create_police_buttons(root):
     #Handles the creation of the popup window containing the search results
@@ -76,8 +88,10 @@ def create_police_buttons(root):
 
         # creates label for officer department of employment and the text box for user 
         # to input the desired insert/search criterion
-        dept = Entry(win,width=30,bg="royalblue2")
-        dept.grid(row=row,column=1)
+        dept = StringVar(root)
+        dept.set('')
+        dept_dropdown = OptionMenu(win, dept, *dept_dropdown_choices())
+        dept_dropdown.grid(row=row,column=1)
         dept_label = Label(win, text="Worked For (Department)",bg="royalblue2")
         dept_label.grid(row=row,column=0)
         row+=1 
@@ -137,10 +151,14 @@ def create_police_buttons(root):
                     cursor.execute(retrieve_max_id)
                     id_text = int(cursor.fetchall()[0][0]) + 1
                     print(id_text)
+
+                    find_dept_id = "select dept_id from department where dept = \"%s\"" %(dept_text)
+                    cursor.execute(find_dept_id)
+                    dept_id = cursor.fetchall()[0][0]
                     # Create a new record
                     sql = "INSERT INTO officer (dead_officer_id,officer_name,dept,\
                         cause_short,death_date,state_abbr) VALUES (%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sql, (id_text,name_text,dept_text,cause_text,date_of_death_text,state_abbr_text))
+                    cursor.execute(sql, (id_text,name_text,dept_id,cause_text,date_of_death_text,state_abbr_text))
                     connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
@@ -150,7 +168,7 @@ def create_police_buttons(root):
                 name.delete(0, END)
                 dod.delete(0, END)
                 #cause.delete(0, END)
-                dept.delete(0,END)
+                
                 #state_abbr.delete(0,END)
         
         #establishes the button to insert the provided info into the db
@@ -193,13 +211,15 @@ def create_police_buttons(root):
                 with connection.cursor() as cursor:
                     sql = "SELECT * FROM officer o,department d WHERE (o.officer_name like '%"
                     name_list = name_text.split(' ')
+                    dept_list = dept_text.split('\'')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or o.officer_name like '%" + name_list[i] + "%'"
-                    sql = sql+") and o.dept like d.dept_id and d.dept like '%" + dept_text + "%'"\
+                    sql = sql+") and o.dept like d.dept_id and d.dept like '%" + dept_list[0] + "%'"\
                     + "and o.death_date like '%" + date_of_death_text + "%'" + \
                     "and o.cause_short like '%" + cause_text + "%'" + "and o.state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
+                    print(sql)
                     search_result = cursor.fetchall()
                    
                     connection.commit()
@@ -210,7 +230,7 @@ def create_police_buttons(root):
                 #clears the text from the boxes
                 name.delete(0, END)
                 dod.delete(0, END)
-                dept.delete(0,END)
+                
                 popup_search_res(search_result)
 
         #establishes the button for searching the database
