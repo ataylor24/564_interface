@@ -3,6 +3,8 @@ import pymysql
 import credentials
 import re
 
+#allows the user to query the database for distinct values of an attribute
+#provided by the caller for use in a dropdown menu
 def dropdown_choices(attribute):
     connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
     cursorclass=pymysql.cursors.DictCursor)
@@ -14,6 +16,8 @@ def dropdown_choices(attribute):
     
     return choices
 
+#allows the user to query the database for distinct values of department in alphabetical
+#provided by the caller for use in a dropdown menu
 def dept_dropdown_choices():
     connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
     
@@ -35,6 +39,7 @@ def create_police_buttons(root):
         win.wm_title("Search Result")
         win.geometry("1200x800")
 
+        #creates a scroll bar and list box to contain search results
         scrollbar = Scrollbar(win)
         scrollbar.pack(side=RIGHT, fill=Y)
         listbox = Listbox(win, yscrollcommand=scrollbar.set,width=150,bg="black",fg="royalblue2")
@@ -49,7 +54,6 @@ def create_police_buttons(root):
     #Handles the creation of the labels/entry boxes for delete
     def write_label_delete(win):
         row = 0
-        #NOT SURE IF THIS SHOULD BE UP TO THE USER
         id_ = Entry(win,width=30,bg="royalblue2")
         id_.grid(row=row,column=1,padx=20)
         id_label = Label(win, text="ID",bg="royalblue2")
@@ -96,14 +100,8 @@ def create_police_buttons(root):
         dept_label.grid(row=row,column=0)
         row+=1 
 
-        # creates label for officer location of death (state) and the text box for user 
-        # to input the desired insert/search criterion
-        # state_abbr = Entry(win,width=30,bg="royalblue2")
-        # state_abbr.grid(row=row,column=1)
-        # state_abbr_label = Label(win, text="State Abbreviation",bg="royalblue2")
-        # state_abbr_label.grid(row=row,column=0)
-        # row+=1
-
+        # creates dropdown for state abbr of death and queries the DB so the user 
+        # may select their desired insert/search criterion
         state_abbr = StringVar(root)
         state_abbr.set('Unspecified') # set the default option
         state_abbr_dropdown = OptionMenu(win, state_abbr, *dropdown_choices("state_abbr"))
@@ -132,12 +130,13 @@ def create_police_buttons(root):
             dept_text = dept.get()
             state_abbr_text = state_abbr.get()
 
+            #regular expression to verify that the date is in the correct format
             r = re.compile('../../....')
             if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
-
+                #error window and label created
                 title = Label(win, text="Incorrect formatting of the date, should be 'mm/dd/yyyy'",fg="red",bg="black")
                 title.grid(row=1,column=0,columnspan=2,ipadx=50)
                 title.config(font=("Times New Roman", 20))
@@ -151,7 +150,7 @@ def create_police_buttons(root):
                     cursor.execute(retrieve_max_id)
                     id_text = int(cursor.fetchall()[0][0]) + 1
                     
-
+                    #finds the id of the department from the name provided in the dropdown
                     find_dept_id = "select dept_id from department where dept = \"%s\"" %(dept_text)
                     cursor.execute(find_dept_id)
                     dept_id = cursor.fetchall()[0][0]
@@ -167,10 +166,7 @@ def create_police_buttons(root):
                 #clears the text from the boxes
                 name.delete(0, END)
                 dod.delete(0, END)
-                #cause.delete(0, END)
-                
-                #state_abbr.delete(0,END)
-        
+ 
         #establishes the button to insert the provided info into the db
         a = Button(win, text="Insert into database", command=insert,highlightbackground="royalblue2")
         a.grid(row=12, column=0)
@@ -193,12 +189,13 @@ def create_police_buttons(root):
             dept_text = dept.get()
             state_abbr_text = state_abbr.get()  if "Unspecified" not in state_abbr.get() else ""
 
+            #regular expression to verify that the date is in the correct format
             r = re.compile('../../....')
             if len(date_of_death_text) > 0 and r.match(date_of_death_text) is None:
                 win = Toplevel(bg="black")
                 win.wm_title("Incorrect Formatting")
                 win.geometry("700x350")
-
+                #error window and label created
                 title = Label(win, text="Incorrect formatting of the date, should be 'mm/dd/yyyy'",fg="red",bg="black")
                 title.grid(row=1,column=0,columnspan=2,ipadx=50)
                 title.config(font=("Times New Roman", 20))
