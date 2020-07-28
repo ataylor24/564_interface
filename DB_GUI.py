@@ -4,6 +4,7 @@ import civ_v_buttons
 import police_v_buttons
 import spec_query_btns
 import credentials #credentials for accessing the database, separate for each member
+#for an example, one group member's credentials is included
 
 def main():
     #sets up the root frame on which the other GUI elements are placed
