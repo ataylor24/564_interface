@@ -52,14 +52,6 @@ def create_civ_v_buttons(root):
     #Handles the creation of the labels/entry boxes for search/insert
     def write_labels(win):
         row = 0
-        
-        # creates label for civilian ID and the text box for user 
-        # to input the desired insert/search criterion
-        id_ = Entry(win,width=30,bg="royalblue2")
-        id_.grid(row=row,column=1,padx=20)
-        id_label = Label(win, text="ID",bg="royalblue2")
-        id_label.grid(row=row,column=0)
-        row+=1
 
         # creates label for civilian name and the text box for user 
         # to input the desired insert/search criterion
@@ -121,14 +113,6 @@ def create_civ_v_buttons(root):
         city_name_label.grid(row=row,column=0)
         row+=1
 
-        # creates label for civilian location of death (state) and the text box for user 
-        # to input the desired insert/search criterion
-        # state_name = Entry(win,width=30,bg="royalblue2")
-        # state_name.grid(row=row,column=1)
-        # state_name_label = Label(win, text="Location of Death (State)",bg="royalblue2")
-        # state_name_label.grid(row=row,column=0)
-        # row+=1
-
         state_name = StringVar(root)
         state_name.set('Unspecified') # set the default option
         state_name_dropdown = OptionMenu(win, state_name, *dropdown_choices("state_abbr"))
@@ -137,7 +121,7 @@ def create_civ_v_buttons(root):
         state_name_label.grid(row=row,column=0)
         row+=1
 
-        return id_,name,age,race,dod,gender,cause,city_name,state_name
+        return name,age,race,dod,gender,cause,city_name,state_name
 
     #creates the popup window for the 'insert new civilian victim' button
     def pop_up_insert():
@@ -147,12 +131,11 @@ def create_civ_v_buttons(root):
         win.geometry("500x350")
 
         #writes the labels/entry boxes in the window
-        id_,name,age,race,dod,gender,cause,city_name,state_name= write_labels(win)
+        name,age,race,dod,gender,cause,city_name,state_name= write_labels(win)
         
         
         def submit():
             #retrieves the text from the boxes
-            id_text = id_.get()
             name_text = name.get()
             age_text = age.get()
             race_text = race.get()
@@ -177,6 +160,9 @@ def create_civ_v_buttons(root):
                 #establishes the connection with the db
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
                 with connection.cursor() as cursor:
+                    retrieve_max_id = "select max(dead_civilian_id) from civilian"
+                    cursor.execute(retrieve_max_id)
+                    id_text = int(cursor.fetchall()[0][0]) + 1
                     # Create a new record
                     sql = "INSERT INTO civilian (dead_civilian_id,cname,\
                         age,gender,race,death_date,city_name,state_abbr,cause) \
@@ -192,7 +178,6 @@ def create_civ_v_buttons(root):
                 connection.close()
                 
                 #clears the text from the boxes to ready it for a new query
-                id_.delete(0, END)
                 name.delete(0, END)
                 age.delete(0, END)
                 dod.delete(0, END)
@@ -211,11 +196,10 @@ def create_civ_v_buttons(root):
         win.geometry("500x350")
 
         #writes the labels/entry boxes
-        id_,name,age,race,dod,gender,cause,city_name,state_name = write_labels(win)
+        name,age,race,dod,gender,cause,city_name,state_name = write_labels(win)
 
         def search():
             #retrieves the text from the boxes
-            id_text = id_.get()
             name_text = name.get()
             age_text = age.get()
             race_text = race.get() if "Unspecified" not in race.get() else ""
@@ -241,8 +225,7 @@ def create_civ_v_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM civilian WHERE dead_civilian_id LIKE '%" + id_text + "%'" + \
-                    "and cname like '%"
+                    sql = "SELECT * FROM civilian WHERE cname like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
@@ -262,7 +245,6 @@ def create_civ_v_buttons(root):
             finally:
                 #clears the text from the boxes
                 connection.close()
-                id_.delete(0, END)
                 name.delete(0, END)
                 age.delete(0, END)
                 dod.delete(0, END)

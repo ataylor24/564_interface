@@ -48,15 +48,6 @@ def create_police_buttons(root):
     #Handles the creation of the labels/entry boxes for search/insert
     def write_label(win):
         row = 0
-        #NOT SURE IF THIS SHOULD BE UP TO THE USER
-        # creates label for officer ID and the text box for user 
-        # to input the desired insert/search criterion
-        id_ = Entry(win,width=30,bg="royalblue2")
-        id_.grid(row=row,column=1,padx=20)
-        id_label = Label(win, text="ID",bg="royalblue2")
-        id_label.grid(row=row,column=0)
-        row+=1
-
         # creates label for officer name and the text box for user 
         # to input the desired insert/search criterion
         name = Entry(win,width=30,bg="royalblue2")
@@ -107,7 +98,7 @@ def create_police_buttons(root):
         state_abbr_label.grid(row=row,column=0)
         row+=1
 
-        return id_,name,dod,cause,dept,state_abbr
+        return name,dod,cause,dept,state_abbr
 
     #creates the popup window for the 'insert new officer victim' button
     def pop_up_insert():
@@ -117,11 +108,10 @@ def create_police_buttons(root):
         win.geometry("600x400")
 
         #writes the labels/entry boxes in the window
-        id_,name,dod,cause,dept,state_abbr = write_label(win)
+        name,dod,cause,dept,state_abbr = write_label(win)
 
         def insert():
             #retrieves the text from the boxes
-            id_text = id_.get()
             name_text = name.get()
             date_of_death_text = dod.get()
             cause_text = cause.get() if "Unspecified" in cause.get() else ""
@@ -143,6 +133,10 @@ def create_police_buttons(root):
             connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name)
             try:
                 with connection.cursor() as cursor:
+                    retrieve_max_id = "select max(dead_officer_id) from officer"
+                    cursor.execute(retrieve_max_id)
+                    id_text = int(cursor.fetchall()[0][0]) + 1
+                    print(id_text)
                     # Create a new record
                     sql = "INSERT INTO officer (dead_officer_id,officer_name,dept,\
                         cause_short,death_date,state_abbr) VALUES (%s,%s,%s,%s,%s,%s)"
@@ -153,7 +147,6 @@ def create_police_buttons(root):
             finally:
                 connection.close()
                 #clears the text from the boxes
-                id_.delete(0, END)
                 name.delete(0, END)
                 dod.delete(0, END)
                 #cause.delete(0, END)
@@ -172,11 +165,10 @@ def create_police_buttons(root):
         win.geometry("600x400")
 
         #writes the labels/entry boxes
-        id_,name,dod,cause,dept,state_abbr = write_label(win)
+        name,dod,cause,dept,state_abbr = write_label(win)
 
         def search():
             #retrieves the text from the boxes
-            id_text = id_.get()
             name_text = name.get()
             date_of_death_text = dod.get()
             cause_text = cause.get() if "Unspecified" not in cause.get() else ""
@@ -199,8 +191,7 @@ def create_police_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM officer o,department d WHERE o.dead_officer_id LIKE '%" + id_text + "%'" + \
-                    "and o.officer_name like '%"
+                    sql = "SELECT * FROM officer o,department d WHERE o.officer_name like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
@@ -216,7 +207,6 @@ def create_police_buttons(root):
             finally:
                 connection.close()
                 #clears the text from the boxes
-                id_.delete(0, END)
                 name.delete(0, END)
                 dod.delete(0, END)
                 dept.delete(0,END)
