@@ -191,12 +191,12 @@ def create_police_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM officer o,department d WHERE o.officer_name like '%"
+                    sql = "SELECT * FROM officer o,department d WHERE (o.officer_name like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or o.officer_name like '%" + name_list[i] + "%'"
-                    sql = sql+"and o.dept like d.dept_id and d.dept like '%" + dept_text + "%'"\
+                    sql = sql+") and o.dept like d.dept_id and d.dept like '%" + dept_text + "%'"\
                     + "and o.death_date like '%" + date_of_death_text + "%'" + \
                     "and o.cause_short like '%" + cause_text + "%'" + "and o.state_abbr like '%" + state_abbr_text + "%'"
                     cursor.execute(sql)
