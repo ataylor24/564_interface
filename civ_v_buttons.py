@@ -110,8 +110,11 @@ def create_civ_v_buttons(root):
 
         # creates label for civilian cause of death and the text box for user 
         # to input the desired insert/search criterion
-        cause = Entry(win,width=30,bg="royalblue2")
-        cause.grid(row=row,column=1)
+
+        cause = StringVar(root)
+        cause.set('Unspecified') # set the default option
+        cause_dropdown = OptionMenu(win, cause, *dropdown_choices("cause"))
+        cause_dropdown.grid(row = row, column =1)
         cause_label = Label(win, text="Cause of Death",bg="royalblue2")
         cause_label.grid(row=row,column=0)
         row+=1
@@ -213,7 +216,6 @@ def create_civ_v_buttons(root):
                 name.delete(0, END)
                 age.delete(0, END)
                 dod.delete(0, END)
-                cause.delete(0, END)
                 city_name.delete(0,END)
 
         #establishes the button to insert the provided info into the db
