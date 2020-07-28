@@ -225,12 +225,12 @@ def create_civ_v_buttons(root):
                 connection = pymysql.connect(credentials.host,credentials.username,credentials.password,credentials.db_name,
                 cursorclass=pymysql.cursors.DictCursor)
                 with connection.cursor() as cursor:
-                    sql = "SELECT * FROM civilian WHERE cname like '%"
+                    sql = "SELECT * FROM civilian WHERE (cname like '%"
                     name_list = name_text.split(' ')
                     sql = sql +name_list[0] + "%'"
                     for i in range(1,len(name_list)):
                         sql = sql + "or cname like '%" + name_list[i] + "%'"
-                    sql = sql + "and age like '%" + age_text + "%'" + \
+                    sql = sql + ") and age like '%" + age_text + "%'" + \
                     "and race like '%" + race_text + "%'" + "and death_date like '%" + date_of_death_text + "%'" + \
                     "and gender like '%" + gender_text + "%'" + "and cause like '%" + cause_text + "%'" + \
                     "and city_name like '%" + city_name_text + "%'" + "and state_abbr like '%" + state_name_text + "%'"
