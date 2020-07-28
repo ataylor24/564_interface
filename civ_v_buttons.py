@@ -313,6 +313,9 @@ def create_civ_v_buttons(root):
                     sql = "DELETE FROM civilian WHERE dead_civilian_id=%s"
                     cursor.execute(sql, (id_text))
                     connection.commit()
+                    sql = "DELETE FROM killed_by WHERE dead_civilian_id =%s"
+                    cursor.execute(sql, (id_text))
+                    connection.commit()
                 # connection is not autocommit by default. So you must commit to save
                 # your changes.
 
