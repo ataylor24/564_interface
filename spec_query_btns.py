@@ -125,7 +125,11 @@ def create_special_query_btns(root):
                 with connection.cursor() as cursor:
                     #create sql query: query uses user input to find the location(city name and state name) where a police department
                     #acts in (using department to match department with a dept_id and acts_in to get relevant information)
-                    sql = "select a.city_name, a.state_abbr, d.dept from acts_in a, department d where a.dept_id = d.dept_id and d.dept like '%" + pd_text +"%';"
+                    pd_list = pd_text.split(' ')
+                    sql = "select a.city_name, a.state_abbr, d.dept from acts_in a, department d where a.dept_id = d.dept_id and (d.dept like '%" + pd_list[0] +"%'"
+                    for i in range(1,len(pd_list)):
+                        sql = sql + "or d.dept like '%" + pd_list[i] + "%'"
+                    sql = sql + ");"
                     cursor.execute(sql)
                     #get results from query as a list of dictionaries
                     act_result = cursor.fetchall()
